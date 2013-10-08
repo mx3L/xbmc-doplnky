@@ -18,16 +18,23 @@ class Generator:
         # notify user
         print "Finished updating addons xml and md5 files"
 
-    def _generate_addons_file( self ):
+    def _generate_addons_file( self ):    
         # addon list
         addons = os.listdir( "." )
         # final addons text
         addons_xml = u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<addons>\n"
+        # ignore all addons defined in addons_ignore_file
+        addons_ignore = []
+
+        if os.path.isfile("./addons_ignore"):
+            with open("./addons_ignore","r") as f:
+                addons_ignore.extend(f.read().splitlines())
+        
         # loop thru and add each addons addon.xml file
         for addon in addons:
             try:
                 # skip any file or .git folder
-                if ( not os.path.isdir( addon ) or addon == ".git" ): continue
+                if ( not os.path.isdir( addon ) or addon == ".git" or addon in addons_ignore): continue
                 # create path
                 _path = os.path.join( addon, "addon.xml" )
                 # split lines for stripping
